@@ -1,10 +1,11 @@
 # render.yaml
-# ✅ 100% free-tier setup (works with Render's free Postgres + Redis)
+# Talawa API Free-Tier Blueprint for Render
+# Includes API, Redis, and Postgres
 
-##########################################################
-# 🚀 MAIN API SERVICE
-##########################################################
 services:
+  ##########################################################
+  # 🚀 API SERVICE
+  ##########################################################
   - type: web
     name: talawa-api
     runtime: docker
@@ -16,13 +17,11 @@ services:
       # Basic
       - key: NODE_ENV
         value: production
-
-      # Render assigns PORT automatically
       - key: PORT
         value: ${PORT}
 
       ######################################################
-      # 📦 DATABASE (Render Free Postgres)
+      # DATABASE (Postgres)
       ######################################################
       - key: DATABASE_URL
         fromDatabase:
@@ -30,7 +29,7 @@ services:
           property: connectionString
 
       ######################################################
-      # 🧠 REDIS (Render Free KeyValue)
+      # REDIS
       ######################################################
       - key: REDIS_URL
         fromService:
@@ -39,7 +38,7 @@ services:
           property: connectionString
 
       ######################################################
-      # 🔐 Secrets (add these manually in Render)
+      # ADMIN / SECRETS (fill manually in Render)
       ######################################################
       - key: JWT_SECRET
         sync: false
@@ -49,24 +48,53 @@ services:
         sync: false
 
       ######################################################
-      # 🌍 Misc settings
+      # COMMUNITY / API CONFIG
       ######################################################
       - key: API_BASE_URL
         value: https://talawa-api.onrender.com
       - key: LOG_LEVEL
         value: info
+      - key: API_COMMUNITY_NAME
+        value: Talawa Community
+      - key: FRONTEND_URL
+        value: https://example-frontend.com
+
+      # Optional GraphQL & rate-limit settings
+      - key: API_IS_GRAPHIQL
+        value: "false"
+      - key: API_IS_PINO_PRETTY
+        value: "false"
+      - key: API_IS_APPLY_DRIZZLE_MIGRATIONS
+        value: "true"
+      - key: API_GRAPHQL_SCALAR_FIELD_COST
+        value: "1"
+      - key: API_GRAPHQL_SCALAR_RESOLVER_FIELD_COST
+        value: "2"
+      - key: API_GRAPHQL_OBJECT_FIELD_COST
+        value: "2"
+      - key: API_GRAPHQL_LIST_FIELD_COST
+        value: "2"
+      - key: API_GRAPHQL_NON_PAGINATED_LIST_FIELD_COST
+        value: "2"
+      - key: API_GRAPHQL_MUTATION_BASE_COST
+        value: "5"
+      - key: API_GRAPHQL_SUBSCRIPTION_BASE_COST
+        value: "10"
+      - key: API_RATE_LIMIT_BUCKET_CAPACITY
+        value: "50"
+      - key: API_RATE_LIMIT_REFILL_RATE
+        value: "5"
+
+  ##########################################################
+  # 🔑 REDIS SERVICE (KeyValue)
+  ##########################################################
+  - type: keyvalue
+    name: talawa-redis
+    plan: free
 
 ##########################################################
 # 🗄️ DATABASE (Postgres Free Plan)
 ##########################################################
 databases:
   - name: talawa-postgres
-    plan: free
-
-##########################################################
-# ⚙️ REDIS (KeyValue Free Plan)
-##########################################################
-services:
-  - type: keyvalue
-    name: talawa-redis
     plan: free
