@@ -1,5 +1,5 @@
 # render.yaml
-# 100% free tier setup for Render — no paid disks or services required
+# ✅ 100% free-tier setup (works with Render's free Postgres + Redis)
 
 ##########################################################
 # 🚀 MAIN API SERVICE
@@ -13,11 +13,11 @@ services:
     plan: free
     autoDeploy: true
     envVars:
-      # Basic config
+      # Basic
       - key: NODE_ENV
         value: production
 
-      # Render assigns PORT dynamically
+      # Render assigns PORT automatically
       - key: PORT
         value: ${PORT}
 
@@ -30,7 +30,7 @@ services:
           property: connectionString
 
       ######################################################
-      # 🧠 REDIS (Render Free Key-Value)
+      # 🧠 REDIS (Render Free KeyValue)
       ######################################################
       - key: REDIS_URL
         fromService:
@@ -39,7 +39,7 @@ services:
           property: connectionString
 
       ######################################################
-      # 🔐 Secrets (set manually in Render dashboard)
+      # 🔐 Secrets (add these manually in Render)
       ######################################################
       - key: JWT_SECRET
         sync: false
@@ -66,6 +66,7 @@ databases:
 ##########################################################
 # ⚙️ REDIS (KeyValue Free Plan)
 ##########################################################
+services:
   - type: keyvalue
     name: talawa-redis
     plan: free
