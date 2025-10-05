@@ -1,0 +1,71 @@
+# render.yaml
+# 100% free tier setup for Render — no paid disks or services required
+
+##########################################################
+# 🚀 MAIN API SERVICE
+##########################################################
+services:
+  - type: web
+    name: talawa-api
+    runtime: docker
+    dockerfilePath: ./docker/api.Containerfile
+    dockerContext: .
+    plan: free
+    autoDeploy: true
+    envVars:
+      # Basic config
+      - key: NODE_ENV
+        value: production
+
+      # Render assigns PORT dynamically
+      - key: PORT
+        value: ${PORT}
+
+      ######################################################
+      # 📦 DATABASE (Render Free Postgres)
+      ######################################################
+      - key: DATABASE_URL
+        fromDatabase:
+          name: talawa-postgres
+          property: connectionString
+
+      ######################################################
+      # 🧠 REDIS (Render Free Key-Value)
+      ######################################################
+      - key: REDIS_URL
+        fromService:
+          name: talawa-redis
+          type: keyvalue
+          property: connectionString
+
+      ######################################################
+      # 🔐 Secrets (set manually in Render dashboard)
+      ######################################################
+      - key: JWT_SECRET
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+      ######################################################
+      # 🌍 Misc settings
+      ######################################################
+      - key: API_BASE_URL
+        value: https://talawa-api.onrender.com
+      - key: LOG_LEVEL
+        value: info
+
+##########################################################
+# 🗄️ DATABASE (Postgres Free Plan)
+##########################################################
+databases:
+  - name: talawa-postgres
+    plan: free
+
+##########################################################
+# ⚙️ REDIS (KeyValue Free Plan)
+##########################################################
+  - type: keyvalue
+    name: talawa-redis
+    plan: free
